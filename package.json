@@ -1,0 +1,80 @@
+{
+  "name": "xiaolaoban-finance-agent",
+  "version": "0.1.0",
+  "description": "本地优先、证据可追溯的个人投资研究 Agent",
+  "private": true,
+  "license": "MIT",
+  "author": "Jesse Chan",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JesseChen26/xiaolaoban-finance-agent.git"
+  },
+  "homepage": "https://github.com/JesseChen26/xiaolaoban-finance-agent#readme",
+  "bugs": {
+    "url": "https://github.com/JesseChen26/xiaolaoban-finance-agent/issues"
+  },
+  "keywords": [
+    "financial-agent",
+    "investment-research",
+    "electron",
+    "local-first",
+    "fund-analysis"
+  ],
+  "main": "desktop/main.js",
+  "scripts": {
+    "start": "node server.js",
+    "test:agent": "node tests/financial-agent.test.js && node tests/external-research.test.js && node tests/error-handling.test.js && node tests/market-visualization.test.js && node tests/fund-visualization.test.js && node tests/fund-auto-sync.test.js && node tests/portfolio-import.test.js && node tests/portfolio-exposure.test.js && node tests/portfolio-image-ocr.test.js",
+    "desktop": "electron .",
+    "build:python": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/prepare-python-runtime.ps1",
+    "build:python-tool": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-python-tool.ps1",
+    "dist:win": "npm run build:python && electron-builder --win portable",
+    "pack:win": "npm run build:python && electron-builder --win portable --dir"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "local.investment-console",
+    "productName": "小老板理财",
+    "asar": false,
+    "files": [
+      "desktop/**",
+      "lib/**",
+      "public/**",
+      "scripts/**",
+      "config/**",
+      "server.js",
+      "README.md",
+      "package.json",
+      "!scripts/__pycache__/**"
+    ],
+    "extraResources": [
+      {
+        "from": "build/python",
+        "to": "python"
+      },
+      {
+        "from": "data/state.example.json",
+        "to": "seed/state.json"
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "portable"
+      ]
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.exe"
+    }
+  },
+  "dependencies": {
+    "@tesseract.js-data/chi_sim": "^1.0.0",
+    "lightweight-charts": "^5.2.0",
+    "tesseract.js": "^7.0.0"
+  }
+}

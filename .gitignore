@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.electron-cache/
+.npm-cache/
+*.log
+.local-server.*
+.env
+.env.*
+!.env.example
+data/*
+!data/state.example.json
+scripts/__pycache__/
+**/__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

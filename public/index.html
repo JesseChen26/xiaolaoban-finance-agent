@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>小老板理财</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">小</span>
+          <div>
+            <strong>小老板理财</strong>
+          </div>
+        </div>
+        <nav class="nav" aria-label="主导航">
+          <button class="nav-button agent-nav" data-view="agent"><span class="nav-pulse"></span>AI 投研室</button>
+          <button class="nav-button active" data-view="dashboard">仪表盘</button>
+          <button class="nav-button" data-view="fund-market">我的基金曲线</button>
+          <button class="nav-button" data-view="exposure">持仓穿透</button>
+          <button class="nav-button" data-view="portfolio">持仓管理</button>
+          <button class="nav-button" data-view="watchlist">ETF 候选池</button>
+          <details class="nav-more">
+            <summary>更多功能 <span>＋</span></summary>
+            <div>
+              <button class="nav-button" data-view="market">专业行情</button>
+              <button class="nav-button" data-view="trades">交易日志</button>
+              <button class="nav-button" data-view="simulation">模拟炒股</button>
+              <button class="nav-button" data-view="news">新闻验证</button>
+              <button class="nav-button" data-view="signals">信号验证</button>
+              <button class="nav-button" data-view="settings">提醒设置</button>
+              <button class="nav-button" data-view="review">复盘报告</button>
+            </div>
+          </details>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">小老板理财</p>
+            <h1 id="view-title">仪表盘</h1>
+          </div>
+          <div class="top-actions">
+            <button class="icon-button" id="save-button" title="保存">保存</button>
+            <button class="secondary-button" id="daily-run-button">更新全部数据</button>
+            <button class="primary-button" id="score-button">生成今日评分</button>
+            <details class="top-more-actions">
+              <summary>更多操作</summary>
+              <div>
+                <button class="secondary-button" id="fund-nav-button">更新基金净值</button>
+                <button class="secondary-button" id="market-button">更新ETF行情</button>
+                <button class="secondary-button" id="crosscheck-nav-button">基金官网核对</button>
+                <button class="secondary-button" id="efunds-button">同步ETF产品库</button>
+                <button class="secondary-button" id="news-button">同步新闻</button>
+                <button class="secondary-button" id="financial-events-button">同步财报</button>
+                <button class="secondary-button" id="signal-button">记录当前信号</button>
+              </div>
+            </details>
+          </div>
+        </header>
+
+        <div class="runtime-banner hidden" id="runtime-banner"></div>
+
+        <section class="view agent-view" id="agent-view">
+          <header class="agent-hero">
+            <div>
+              <p class="agent-kicker">RESEARCH DESK · 只读投研代理</p>
+              <h2>把一个模糊问题，变成一份可核验的研究结论。</h2>
+              <p>不是陪聊。Agent 会拆解任务、调用白名单工具，并把证据、风险、来源时效分别交代清楚。</p>
+            </div>
+            <div class="agent-mode-card">
+              <span class="agent-live-dot"></span>
+              <div><strong id="agent-mode-label">正在检查</strong><small id="agent-model-label">研究引擎连接状态</small></div>
+            </div>
+          </header>
+
+          <div class="agent-workbench">
+            <aside class="agent-brief-column">
+              <section class="research-brief">
+                <div class="brief-index">01 / 下达研究任务</div>
+                <label for="agent-question">今天想弄清楚什么？</label>
+                <textarea id="agent-question" maxlength="1200" placeholder="例如：为什么 512880 今天只属于普通观察？请同时检查行情、评分理由和近期事件。"></textarea>
+                <div class="agent-suggestions">
+                  <button data-agent-question="为什么今天排名第一的ETF值得继续研究？请列出支持证据和反向风险。">研究今日首选</button>
+                  <button data-agent-question="比较 512880 和候选池中评分最高的另一只ETF，哪只更值得继续观察？">比较两只ETF</button>
+                  <button data-agent-question="复盘最近一条历史信号：当时依据是什么，后续验证结果如何？">复盘历史信号</button>
+                </div>
+                <button class="agent-run-button" id="agent-run-button"><span>启动研究</span><span aria-hidden="true">↗</span></button>
+                <p class="agent-boundary">不会下单 · 不连接券商 · 最多 10 轮 / 8 次只读工具</p>
+              </section>
+
+              <section class="agent-history-panel">
+                <div class="agent-section-title"><span>研究档案</span><small id="agent-history-count">0 份</small></div>
+                <div id="agent-history" class="agent-history"></div>
+              </section>
+            </aside>
+
+            <main class="agent-dossier-column">
+              <div class="agent-empty-state" id="agent-empty-state">
+                <span class="empty-coordinate">NO. 000</span>
+                <div class="empty-orbit"><span></span></div>
+                <h3>等待研究命题</h3>
+                <p>输入问题后，这里会生成投研结论书。事实、规则与模型推断不会混在一起。</p>
+              </div>
+              <article class="agent-dossier hidden" id="agent-dossier">
+                <div class="dossier-masthead">
+                  <div><span id="dossier-number">RESEARCH / 001</span><small id="dossier-time">-</small></div>
+                  <span class="dossier-mode" id="dossier-mode">本地研究模式</span>
+                </div>
+                <h3 id="dossier-question"></h3>
+                <div class="verdict-strip">
+                  <div><small>研究结论</small><strong id="dossier-verdict">数据不足</strong></div>
+                  <div><small>规则评分</small><strong id="dossier-score">—</strong></div>
+                  <div><small>证据来源</small><strong id="dossier-source-count">0</strong></div>
+                  <div><small>信息可靠性</small><strong id="dossier-reliability" data-tone="low">待核验</strong></div>
+                </div>
+                <section class="dossier-summary"><span class="dossier-label">结论摘要</span><p id="dossier-narrative"></p></section>
+                <section class="agent-market-brief hidden" id="agent-market-brief">
+                  <div class="dossier-heading market-heading"><span>标的行情证据</span><small>K 线 · MA20/MA60 · 十字光标</small></div>
+                  <div id="agent-market-chart" class="agent-market-chart"></div>
+                  <div class="market-crosshair compact" id="agent-market-readout">移动鼠标查看 OHLC</div>
+                </section>
+                <div class="dossier-evidence-grid">
+                  <section><div class="dossier-heading positive-heading"><span>支持证据</span><small>FACT + RULE</small></div><div id="dossier-evidence" class="evidence-stack"></div></section>
+                  <section><div class="dossier-heading risk-heading"><span>反向风险</span><small>COUNTER CASE</small></div><div id="dossier-risks" class="evidence-stack"></div></section>
+                </div>
+                <footer class="dossier-disclosure" id="dossier-disclosure"></footer>
+              </article>
+            </main>
+
+            <aside class="agent-trace-column">
+              <section class="agent-trace-panel">
+                <div class="agent-section-title"><span>Agent 轨迹</span><small id="agent-loop-summary">PLAN → ACT → OBSERVE → REPLAN</small></div>
+                <div id="agent-trace" class="agent-trace"><p class="trace-placeholder">研究开始后显示任务拆解与工具调用。</p></div>
+              </section>
+              <section class="source-ledger-panel">
+                <div class="agent-section-title"><span>证据账本</span><small>可追溯</small></div>
+                <div id="agent-source-ledger" class="source-ledger"><p class="trace-placeholder">尚未调用数据源。</p></div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view active" id="dashboard-view">
+          <div class="status-grid">
+            <div class="metric">
+              <span>当前状态</span>
+              <strong id="status-label">读取中</strong>
+            </div>
+            <div class="metric">
+              <span>当前持仓市值</span>
+              <strong id="market-value">0.00</strong>
+            </div>
+            <div class="metric">
+              <span>当前盈亏</span>
+              <strong id="pnl-value">0.00</strong>
+            </div>
+            <div class="metric">
+              <span>邮件收件人</span>
+              <strong id="email-label">-</strong>
+            </div>
+          </div>
+
+          <section class="panel answer-panel">
+            <div class="panel-header">
+              <h2>五个问题</h2>
+              <span class="badge" id="five-answer-badge">待检查</span>
+            </div>
+            <div id="five-answer-list" class="check-list"></div>
+          </section>
+
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>操作建议</h2>
+                <span id="risk-badge" class="badge">未计算</span>
+              </div>
+              <p id="market-update-text" class="muted-line">行情尚未更新。</p>
+              <p id="recommendation-text" class="recommendation">正在读取本地数据。</p>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>今日操作计划</h2>
+                <span id="operation-plan-badge" class="badge">待计算</span>
+              </div>
+              <div id="operation-plan-list" class="check-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>手动操作清单</h2>
+                <span id="manual-order-badge" class="badge">待计算</span>
+              </div>
+              <div id="manual-order-list" class="check-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>邮件预览</h2>
+                <div class="top-actions">
+                  <button class="secondary-button" id="email-reminder-button">生成提醒</button>
+                  <button class="secondary-button" id="copy-email-button">复制</button>
+                </div>
+              </div>
+              <p id="email-reminder-status" class="muted-line">尚未生成今日提醒。</p>
+              <pre id="email-preview" class="email-preview"></pre>
+            </section>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>持仓快照</h2>
+                <span class="badge" id="position-count-badge">0 只</span>
+              </div>
+              <div id="position-snapshot" class="snapshot-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>数据健康</h2>
+                <span class="badge" id="data-health-badge">待检查</span>
+              </div>
+              <div id="data-health-list" class="check-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>正式实验开始检查</h2>
+                <div class="top-actions">
+                  <button class="primary-button" id="formal-start-toggle">开启正式记录</button>
+                  <span class="badge" id="formal-start-badge">待检查</span>
+                </div>
+              </div>
+              <div id="formal-start-list" class="check-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>目标验收</h2>
+                <div class="top-actions">
+                  <button class="secondary-button" id="goal-audit-button">运行审计</button>
+                  <span class="badge" id="goal-acceptance-badge">待检查</span>
+                </div>
+              </div>
+              <div id="goal-acceptance-list" class="check-list"></div>
+            </section>
+
+            <section class="panel step-tracker-panel">
+              <div class="panel-header">
+                <h2>第9/10步进度</h2>
+                <div class="top-actions">
+                  <button class="secondary-button" id="step-tracker-signal-link">去信号页</button>
+                  <span class="badge warn" id="step-tracker-badge">待检查</span>
+                </div>
+              </div>
+              <div id="step-tracker-list" class="check-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>下一步行动</h2>
+                <span class="badge warn" id="next-action-badge">待生成</span>
+              </div>
+              <div id="next-action-list" class="check-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>预测可信度</h2>
+                <span class="badge warn">实验中</span>
+              </div>
+              <p id="credibility-text" class="muted-line"></p>
+              <div id="signal-progress" class="progress-block"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>提醒发送</h2>
+                <span class="badge" id="delivery-badge">待检查</span>
+              </div>
+              <div id="delivery-status-list" class="check-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>每日流程</h2>
+                <span class="badge" id="daily-run-badge">未运行</span>
+              </div>
+              <div id="daily-run-list" class="check-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view market-view" id="market-view">
+          <header class="market-terminal-header">
+            <div>
+              <p class="market-terminal-kicker">MARKET MAP / PROFESSIONAL VIEW</p>
+              <h2><span id="market-symbol-title">ETF 行情</span><small id="market-symbol-meta">请先更新行情</small></h2>
+            </div>
+            <div class="market-controls">
+              <label>研究标的<select id="market-symbol-select"><option value="">暂无历史数据</option></select></label>
+              <div class="range-switch" aria-label="K线显示范围">
+                <button data-market-range="22">1M</button><button data-market-range="66">3M</button><button data-market-range="120" class="active">6M</button><button data-market-range="all">全部</button>
+              </div>
+            </div>
+          </header>
+
+          <div class="market-status-strip">
+            <div><small>数据核验</small><strong id="market-verify-status">待更新</strong></div>
+            <div><small>研究等级</small><strong id="market-grade">-</strong></div>
+            <div><small>最后交易日</small><strong id="market-last-date">-</strong></div>
+            <div class="market-crosshair" id="market-crosshair-readout">移动鼠标查看开高低收、成交量和均线</div>
+          </div>
+
+          <div class="market-terminal-grid">
+            <section class="market-chart-card market-chart-main">
+              <header><div><span>价格行为</span><small>前复权日 K · MA20 · MA60 · 成交量</small></div><div class="chart-legend"><i class="ma20"></i>MA20 <i class="ma60"></i>MA60 <i class="event"></i>事件/信号</div></header>
+              <div id="market-kline-chart" class="chart-surface chart-large"></div>
+              <p class="chart-hint">滚轮缩放 · 按住拖动平移 · 双击恢复全部 · 十字光标精确读数</p>
+            </section>
+
+            <section class="market-chart-card">
+              <header><div><span>相对强弱</span><small>起点归一为 100</small></div><div class="chart-legend"><i class="instrument"></i>本标的 <i class="benchmark"></i>沪深300</div></header>
+              <div id="market-relative-chart" class="chart-surface"></div>
+            </section>
+
+            <section class="market-chart-card">
+              <header><div><span>趋势研究曲线</span><small>累计净值与回撤</small></div><div class="chart-legend"><i class="strategy"></i>规则净值 <i class="drawdown"></i>回撤</div></header>
+              <div id="market-strategy-chart" class="chart-surface"></div>
+              <p class="chart-method" id="market-strategy-method"></p>
+            </section>
+
+            <section class="market-chart-card">
+              <header><div><span>5 / 20 / 60 日验证</span><small>收益、基准与超额</small></div></header>
+              <div id="market-validation-grid" class="validation-grid"></div>
+            </section>
+
+            <section class="market-chart-card">
+              <header><div><span>模拟组合净值</span><small>资产曲线与回撤轨迹</small></div></header>
+              <div id="market-portfolio-chart" class="chart-surface"></div>
+              <p class="chart-method" id="market-portfolio-empty"></p>
+            </section>
+          </div>
+          <footer class="chart-attribution">图表组件由 <a href="https://www.tradingview.com/" target="_blank" rel="noreferrer">TradingView Lightweight Charts™</a> 提供；行情仅用于本地研究演示，不构成投资建议。</footer>
+        </section>
+
+        <section class="view market-view fund-market-view" id="fund-market-view">
+          <header class="market-terminal-header fund-terminal-header">
+            <div>
+              <p class="market-terminal-kicker">MY FUNDS / VERIFIED NAV</p>
+              <h2><span id="fund-symbol-title">我的基金净值</span><small id="fund-symbol-meta">点击“更新净值”同步真实数据</small></h2>
+            </div>
+            <div class="market-controls">
+              <label>我的持仓<select id="fund-symbol-select"><option value="">暂无历史净值</option></select></label>
+              <div class="range-switch" aria-label="基金净值显示范围">
+                <button data-fund-range="66">3M</button><button data-fund-range="132">6M</button><button data-fund-range="250" class="active">1Y</button><button data-fund-range="750">3Y</button><button data-fund-range="all">全部</button>
+              </div>
+            </div>
+          </header>
+
+          <div class="market-status-strip fund-status-strip">
+            <div><small>最新单位净值</small><strong id="fund-current-nav">-</strong></div>
+            <div><small>你的成本净值</small><strong id="fund-cost-nav">-</strong></div>
+            <div><small>持仓盈亏</small><strong id="fund-holding-pnl">-</strong></div>
+            <div><small>净值日期 / 校验</small><strong id="fund-last-date">-</strong></div>
+            <div class="market-crosshair" id="fund-crosshair-readout">移动鼠标查看日期、单位净值、日涨跌和相对成本</div>
+          </div>
+
+          <div class="market-terminal-grid">
+            <section class="market-chart-card market-chart-main">
+              <header><div><span>历史单位净值</span><small>基金公司披露口径 · 叠加你的成本线</small></div><div class="chart-legend"><i class="fund-nav"></i>单位净值 <i class="fund-cost"></i>持仓成本</div></header>
+              <div id="fund-nav-chart" class="chart-surface chart-large"></div>
+              <p class="chart-hint">滚轮缩放 · 按住拖动平移 · 双击恢复全部 · QDII 净值通常晚于境内基金</p>
+            </section>
+            <section class="market-chart-card">
+              <header><div><span>基金累计走势</span><small>当前可用历史起点归一为 100</small></div><div class="chart-legend"><i class="fund-return"></i>累计指数</div></header>
+              <div id="fund-return-chart" class="chart-surface"></div>
+            </section>
+            <section class="market-chart-card">
+              <header><div><span>历史回撤</span><small>距离此前净值高点的跌幅</small></div><div class="chart-legend"><i class="drawdown"></i>回撤</div></header>
+              <div id="fund-drawdown-chart" class="chart-surface"></div>
+            </section>
+            <section class="market-chart-card">
+              <header><div><span>区间表现</span><small>按净值交易日计算</small></div></header>
+              <div id="fund-metrics-grid" class="validation-grid"></div>
+            </section>
+            <section class="market-chart-card fund-data-card">
+              <header><div><span>数据与持仓口径</span><small>防止把基金走势误当成个人收益</small></div></header>
+              <div class="fund-data-notes" id="fund-data-notes"></div>
+            </section>
+          </div>
+          <footer class="chart-attribution">曲线使用基金公开披露的每日单位净值；支付宝截图只用于你的当前持仓金额与盈亏快照。图表不构成投资建议。</footer>
+        </section>
+
+        <section class="view exposure-view" id="exposure-view">
+          <header class="exposure-hero">
+            <div>
+              <p class="market-terminal-kicker">PORTFOLIO X-RAY / DISCLOSED HOLDINGS</p>
+              <h2>看清基金背后，真正持有哪些股票。</h2>
+              <p>按你的当前基金市值折算，合并重复股票，并保留未披露部分。季度报告不是实时仓位。</p>
+            </div>
+            <div class="exposure-controls">
+              <label>查看单只基金<select id="exposure-fund-select"><option value="">正在读取</option></select></label>
+              <button class="primary-button" id="exposure-refresh-button">刷新季度持仓</button>
+            </div>
+          </header>
+          <div class="exposure-metrics">
+            <article><small>当前组合市值</small><strong id="exposure-total-value">-</strong></article>
+            <article><small>已知股票穿透</small><strong id="exposure-known-stock">-</strong></article>
+            <article><small>已映射基金</small><strong id="exposure-mapped-funds">-</strong></article>
+            <article><small>数据更新时间</small><strong id="exposure-updated-at">-</strong></article>
+          </div>
+          <div class="exposure-grid">
+            <section class="exposure-card exposure-wide">
+              <header><div><span>组合资产透视</span><small>金额按当前持仓市值折算</small></div></header>
+              <div id="exposure-asset-bars" class="exposure-bars"></div>
+            </section>
+            <section class="exposure-card">
+              <header><div><span>行业分布</span><small>仅统计已披露股票</small></div></header>
+              <div id="exposure-sector-bars" class="exposure-bars compact"></div>
+            </section>
+            <section class="exposure-card">
+              <header><div><span>市场分布</span><small>以总组合市值为分母</small></div></header>
+              <div id="exposure-market-bars" class="exposure-bars compact"></div>
+            </section>
+            <section class="exposure-card exposure-wide">
+              <header><div><span id="exposure-selected-title">基金持仓明细</span><small id="exposure-selected-meta">-</small></div><span class="exposure-confidence" id="exposure-confidence">-</span></header>
+              <div class="table-wrap"><table class="exposure-table"><thead><tr><th>股票</th><th>基金内权重</th><th>你的折算金额</th><th>占总组合</th><th>行业 / 市场</th></tr></thead><tbody id="exposure-fund-holdings"></tbody></table></div>
+              <div id="exposure-selected-warning" class="exposure-warning"></div>
+            </section>
+            <section class="exposure-card exposure-wide">
+              <header><div><span>全组合股票合并</span><small>同一股票在多只基金中自动合并</small></div></header>
+              <div class="table-wrap"><table class="exposure-table"><thead><tr><th>股票</th><th>折算金额</th><th>占总组合</th><th>来源基金</th><th>重叠</th></tr></thead><tbody id="exposure-aggregate-stocks"></tbody></table></div>
+            </section>
+            <section class="exposure-card exposure-wide exposure-source-card">
+              <header><div><span>口径与证据</span><small>可追溯，不伪装成实时数据</small></div></header>
+              <div id="exposure-methodology"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="watchlist-view">
+          <div class="section-header">
+            <div>
+              <h2>ETF 候选池</h2>
+              <p>候选池来自内置常见 ETF 种子池，更新行情后按趋势、流动性、风险和资金适配度评分。高分只代表值得观察，不代表必须买入。</p>
+            </div>
+            <button class="secondary-button" id="add-watch-button">新增 ETF</button>
+          </div>
+          <div class="guide-panel">
+            <strong>新手决策规则</strong>
+            <span>页面只展示每日更新后仍为 A/B 级的 ETF；C/D 级自动隐藏。优先选择价格适合 200 元、趋势没走坏的标的；没有合格项就保持空仓。买入前必须手动确认代码、价格和止损价。</span>
+          </div>
+          <div id="candidate-explain-list" class="candidate-explain-list"></div>
+          <div class="official-panel">
+            <div>
+              <strong>易方达官方 ETF 产品库</strong>
+              <span id="efunds-summary">尚未同步。</span>
+            </div>
+            <div class="official-list" id="efunds-list"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>代码</th>
+                  <th>名称</th>
+                  <th>方向</th>
+                  <th>价格</th>
+                  <th>成交额</th>
+                  <th>规模(亿)</th>
+                  <th>价差%</th>
+                  <th>20日线</th>
+                  <th>60日线</th>
+                  <th>20日斜率</th>
+                  <th>1月</th>
+                  <th>3月</th>
+                  <th>基准1月</th>
+                  <th>基准3月</th>
+                  <th>总分</th>
+                  <th>等级</th>
+                  <th>状态</th>
+                  <th>建议</th>
+                </tr>
+              </thead>
+              <tbody id="watchlist-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" id="portfolio-view">
+          <div class="section-header">
+            <div>
+              <h2>持仓管理</h2>
+              <p>直接在软件里录入股票、ETF 或基金。数据保存在本机，不需要 Codex，也不需要登录支付宝。</p>
+            </div>
+            <div class="top-actions">
+              <button class="primary-button" id="import-position-button">导入 / 添加持仓</button>
+              <button class="secondary-button" id="add-position-button">新增持仓</button>
+            </div>
+          </div>
+          <section class="portfolio-import-entry">
+            <div><span class="import-entry-index">01</span><strong>把你的真实持仓放进来</strong><p>单只填写适合股票/ETF；批量粘贴适合支付宝基金列表；也可选择 CSV/TXT 文件。</p></div>
+            <button class="secondary-button" id="portfolio-import-entry-button">打开导入窗口</button>
+          </section>
+          <div id="portfolio-list" class="list"></div>
+        </section>
+
+        <section class="view" id="trades-view">
+          <div class="section-header">
+            <div>
+              <h2>交易日志</h2>
+              <p>记录实际成交，不记录就无法复盘。</p>
+            </div>
+            <button class="secondary-button" id="add-trade-button">新增交易</button>
+          </div>
+          <div id="trade-list" class="list"></div>
+        </section>
+
+        <section class="view" id="simulation-view">
+          <div class="section-header">
+            <div>
+              <h2>模拟炒股</h2>
+              <p>每周给模拟账户 500 元虚拟资金，由系统按规则决定买入、卖出或持币，并单独统计盈亏；不影响真实持仓和真实交易日志。</p>
+            </div>
+            <div class="top-actions">
+              <button class="primary-button" id="simulate-weekly-buy-button">本周模拟决策</button>
+              <button class="secondary-button" id="simulate-refresh-button">刷新模拟盈亏</button>
+            </div>
+          </div>
+          <div class="guide-panel">
+            <strong>模拟规则</strong>
+            <span>模拟账户可买、可卖、可空仓。买入只从候选池 A/B 级且未剔除的场内 ETF 中选择；卖出按止损、趋势破坏和止盈回落规则触发；买不了一手的钱留作模拟现金。真实交易仍由你手动执行，两套账分开看。</span>
+          </div>
+          <div class="status-grid simulation-metrics">
+            <div class="metric">
+              <span>每周虚拟资金</span>
+              <strong id="sim-weekly-budget">500.00</strong>
+            </div>
+            <div class="metric">
+              <span>模拟现金</span>
+              <strong id="sim-cash">0.00</strong>
+            </div>
+            <div class="metric">
+              <span>模拟市值</span>
+              <strong id="sim-market-value">0.00</strong>
+            </div>
+            <div class="metric">
+              <span>模拟盈亏</span>
+              <strong id="sim-pnl">0.00</strong>
+            </div>
+          </div>
+          <div class="dashboard-grid simulation-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>最近运行</h2>
+                <span class="badge" id="sim-run-badge">未运行</span>
+              </div>
+              <div id="sim-run-list" class="check-list"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <h2>模拟持仓</h2>
+                <span class="badge" id="sim-position-badge">0 只</span>
+              </div>
+              <div id="sim-position-list" class="check-list"></div>
+            </section>
+          </div>
+          <section class="panel simulation-orders-panel">
+            <div class="panel-header">
+              <h2>模拟交易记录</h2>
+              <span class="badge" id="sim-order-badge">0 笔</span>
+            </div>
+            <div id="sim-order-list" class="check-list"></div>
+          </section>
+        </section>
+
+        <section class="view" id="news-view">
+          <div class="section-header">
+            <div>
+              <h2>新闻事件验证</h2>
+              <p>抓取易方达指数专区最新动态，匹配相关 ETF，观察新闻日前后 -5、+5、+20 个交易日表现。</p>
+            </div>
+            <button class="secondary-button" id="source-whitelist-button">同步信息源</button>
+          </div>
+          <div class="guide-panel">
+            <strong>判断原则</strong>
+            <span>新闻只能作为事件线索，不能直接作为买入理由。若新闻发布后才上涨，可能是滞后报道；若新闻前已上涨，说明市场可能提前反映。</span>
+          </div>
+          <div id="source-whitelist-panel" class="source-whitelist-panel"></div>
+          <section class="panel financial-events-panel">
+            <div class="panel-header">
+              <h2>财报事件</h2>
+              <span class="badge" id="financial-events-badge">待同步</span>
+            </div>
+            <p class="muted-line">第一版只抓 SEC EDGAR 官方 10-K/10-Q 财报申报，用来观察金融巨头财报前后相关 ETF 的 5/20 日表现。</p>
+            <div id="financial-events-list" class="list"></div>
+          </section>
+          <div id="news-list" class="list"></div>
+        </section>
+
+        <section class="view" id="signals-view">
+          <div class="section-header">
+            <div>
+              <h2>信号验证</h2>
+              <p>记录每一次“买入、卖出、赎回、空仓、继续观察”的建议，后续用 5/20/60 日真实表现验证是否有效。</p>
+            </div>
+            <div class="top-actions">
+              <button class="secondary-button" id="sample-guard-button">样本守护</button>
+              <button class="secondary-button" id="signal-integrity-button">样本完整性</button>
+              <button class="secondary-button" id="state-backup-button">备份状态</button>
+              <button class="secondary-button" id="maturity-schedule-button">回看到期表</button>
+              <button class="secondary-button" id="review-todo-button">回看待办</button>
+              <button class="secondary-button" id="credibility-report-button">可信度判定</button>
+              <button class="secondary-button" id="export-signals-button">导出信号历史</button>
+              <button class="secondary-button" id="validate-signals-button">回看信号结果</button>
+              <button class="secondary-button" id="add-signal-button">记录当前信号</button>
+            </div>
+          </div>
+          <div class="guide-panel">
+            <strong>可信度规则</strong>
+            <span>少于 30 条信号前，不允许说策略准确。每条信号必须保存当时的数据、建议和理由，失败样本也不能删除。</span>
+          </div>
+          <div class="guide-panel signal-summary-panel" id="sample-plan-panel"></div>
+          <div class="guide-panel signal-summary-panel" id="sample-guard-panel"></div>
+          <div class="guide-panel signal-summary-panel" id="signal-integrity-panel"></div>
+          <div class="guide-panel signal-summary-panel" id="state-backup-panel"></div>
+          <div class="guide-panel signal-summary-panel" id="maturity-schedule-panel"></div>
+          <div class="guide-panel signal-summary-panel" id="review-todo-panel"></div>
+          <div class="guide-panel signal-summary-panel" id="credibility-report-panel"></div>
+          <div class="guide-panel signal-summary-panel" id="signal-export-panel"></div>
+          <div class="guide-panel execution-todo-panel" id="execution-todo-panel"></div>
+          <div class="guide-panel signal-summary-panel" id="signal-summary"></div>
+          <div id="accuracy-report" class="accuracy-report"></div>
+          <div id="signal-list" class="list"></div>
+        </section>
+
+        <section class="view" id="settings-view">
+          <div class="form-panel">
+            <h2>邮件与风控设置</h2>
+            <div class="form-grid">
+              <label>收件邮箱<input id="email-input" type="email" /></label>
+              <label>总实验资金<input id="total-capital-input" type="number" /></label>
+              <label>试验仓资金<input id="trial-capital-input" type="number" /></label>
+              <label>暂停亏损线<input id="pause-loss-input" type="number" /></label>
+              <label>停止亏损线<input id="stop-loss-input" type="number" /></label>
+              <label>收盘提醒时间<input id="close-time-input" type="time" /></label>
+            </div>
+            <div class="toggle-row">
+              <label><input id="intraday-input" type="checkbox" /> 有持仓时启用 14:30 风控检查</label>
+              <label><input id="change-only-input" type="checkbox" /> 只在状态变化时提醒</label>
+              <label><input id="formal-recording-input" type="checkbox" /> 开启正式样本记录</label>
+            </div>
+            <p class="muted-line" id="formal-recording-help">未开启时，每日运行和生成今日评分只做预检与邮件提醒，不写入正式信号样本。</p>
+          </div>
+        </section>
+
+        <section class="view" id="review-view">
+          <div class="section-header">
+            <div>
+              <h2>复盘报告</h2>
+              <p>每天生成状态，周五汇总纪律执行。</p>
+            </div>
+            <div class="top-actions">
+              <button class="secondary-button" id="performance-report-button">执行表现</button>
+              <button class="secondary-button" id="weekly-review-button">生成周报</button>
+              <button class="secondary-button" id="add-status-button">记录今日状态</button>
+            </div>
+          </div>
+          <div id="performance-report-panel" class="weekly-review-panel"></div>
+          <div id="weekly-review-panel" class="weekly-review-panel"></div>
+          <div id="daily-list" class="list"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="holding-import-dialog" id="portfolio-import-dialog">
+      <div class="holding-import-shell">
+        <header class="holding-import-header">
+          <div><p class="eyebrow">LOCAL PORTFOLIO IMPORT</p><h2>导入真实持仓</h2><span>所有内容只写入这台电脑的软件数据文件。</span></div>
+          <button class="dialog-close" id="cancel-portfolio-import-button" aria-label="关闭">×</button>
+        </header>
+        <div class="import-mode-tabs">
+          <button class="active" data-import-mode="single">单只添加</button>
+          <button data-import-mode="batch">批量导入</button>
+          <button data-import-mode="image">图片识别</button>
+        </div>
+        <section class="import-mode-panel active" data-import-panel="single">
+          <div class="import-form-grid">
+            <label>代码<input id="single-import-code" placeholder="例如 600519 / 510300 / 511010" /></label>
+            <label>名称<input id="single-import-name" placeholder="股票、ETF 或基金名称" /></label>
+            <label>资产类型<select id="single-import-type"><option>股票</option><option>场内ETF</option><option>场外基金</option><option>场外基金·ETF联接</option><option>场外基金·QDII</option><option>场外基金·债券</option><option>场外基金·混合</option></select></label>
+            <label>持有数量/份额<input id="single-import-quantity" type="number" min="0" step="0.000001" placeholder="100" /></label>
+            <label>平均成本价/净值<input id="single-import-cost" type="number" min="0" step="0.000001" placeholder="10.20" /></label>
+            <label>当前价/最新净值<input id="single-import-current" type="number" min="0" step="0.000001" placeholder="10.50" /></label>
+          </div>
+          <p class="import-help">股票和场内 ETF 请填写数量、成本价、当前价。场外基金如果不知道份额，可切换到“批量导入”，填写当前金额和持有收益。</p>
+          <button class="primary-button" id="confirm-single-import-button">保存这只持仓</button>
+        </section>
+        <section class="import-mode-panel" data-import-panel="batch">
+          <div class="batch-import-toolbar">
+            <p>每行四列：<strong>代码 | 名称 | 当前金额 | 持有收益</strong></p>
+            <label class="file-import-button">选择 CSV / TXT<input id="portfolio-import-file" type="file" accept=".csv,.txt,.tsv,text/csv,text/plain" /></label>
+          </div>
+          <textarea id="portfolio-import-input" rows="10" placeholder="510300 | 沪深300ETF（演示） | 10000.00 | 500.00"></textarea>
+          <div class="top-actions">
+            <button class="secondary-button" id="load-screenshot-portfolio-button">载入示例</button>
+            <button class="primary-button" id="confirm-portfolio-import-button">确认批量导入</button>
+          </div>
+        </section>
+        <section class="import-mode-panel" data-import-panel="image">
+          <div class="image-ocr-drop" id="image-ocr-drop">
+            <input id="portfolio-image-input" type="file" accept="image/png,image/jpeg,image/webp,image/bmp" />
+            <div class="image-ocr-icon">▧</div>
+            <strong>选择支付宝或其他平台的持仓截图</strong>
+            <p>PNG、JPG、WebP、BMP，最大 9MB。图片仅在本机离线识别，不会上传。</p>
+            <button class="secondary-button" id="choose-portfolio-image-button">选择图片</button>
+          </div>
+          <div class="image-ocr-progress hidden" id="image-ocr-progress"><span></span><strong>正在进行本地中文识别，首次运行可能需要 10–30 秒…</strong></div>
+          <div class="image-ocr-preview hidden" id="image-ocr-preview">
+            <div class="panel-header"><div><strong>识别结果校对</strong><p class="muted-line" id="image-ocr-summary"></p></div><button class="primary-button" id="confirm-image-import-button">确认导入勾选项</button></div>
+            <div class="table-wrap"><table class="image-ocr-table"><thead><tr><th>导入</th><th>基金代码</th><th>识别名称</th><th>自动判断类型</th><th>当前金额</th><th>持有收益</th></tr></thead><tbody id="image-ocr-results"></tbody></table></div>
+            <details><summary>查看原始 OCR 文字</summary><pre id="image-ocr-raw-text"></pre></details>
+          </div>
+        </section>
+        <footer><p id="portfolio-import-status">导入后，场外基金会自动尝试更新净值和季度持仓；网络失败不会删除已录入内容。</p></footer>
+      </div>
+    </dialog>
+
+    <template id="position-template">
+      <article class="record">
+        <div class="record-grid">
+          <label>代码<input data-field="code" /></label>
+          <label>名称<input data-field="name" /></label>
+          <label>类型<input data-field="type" /></label>
+          <label>成本价<input data-field="cost" type="number" step="0.001" /></label>
+          <label>当前价<input data-field="current" type="number" step="0.001" /></label>
+          <label>退出目标价<input data-field="target" type="number" step="0.001" /></label>
+          <label>数量<input data-field="quantity" type="number" /></label>
+          <label>止损价<input data-field="stop" type="number" step="0.001" /></label>
+          <label>导入时市值<input data-field="reportedMarketValue" type="number" step="0.01" /></label>
+          <label>导入时盈亏<input data-field="reportedPnl" type="number" step="0.01" /></label>
+        </div>
+        <textarea data-field="notes" placeholder="买入理由、止损逻辑、复盘备注"></textarea>
+        <button class="danger-button" data-action="remove">删除</button>
+      </article>
+    </template>
+
+    <template id="trade-template">
+      <article class="record">
+        <div class="record-grid">
+          <label>日期<input data-field="date" type="date" /></label>
+          <label>代码<input data-field="code" /></label>
+          <label>名称<input data-field="name" /></label>
+          <label>方向<select data-field="side"><option>买入</option><option>卖出</option></select></label>
+          <label>价格<input data-field="price" type="number" step="0.001" /></label>
+          <label>数量<input data-field="quantity" type="number" /></label>
+          <label>手续费<input data-field="fee" type="number" step="0.01" /></label>
+        </div>
+        <textarea data-field="notes" placeholder="是否按规则执行、情绪和改进点"></textarea>
+        <button class="danger-button" data-action="remove">删除</button>
+      </article>
+    </template>
+
+    <script src="./vendor/lightweight-charts.standalone.production.js"></script>
+    <script src="./market-charts.js"></script>
+    <script src="./fund-charts.js"></script>
+    <script src="./app.js"></script>
+    <script src="./agent.js"></script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "settings": {
+    "email": "",
+    "totalCapital": 1000,
+    "trialCapital": 200,
+    "pauseLoss": 10,
+    "stopLoss": 20,
+    "closeReminderTime": "15:45",
+    "intradayRiskCheck": false,
+    "onlyOnStatusChange": false,
+    "formalSignalRecording": false
+  },
+  "portfolio": [],
+  "watchlist": [],
+  "marketHistory": {},
+  "fundNavHistory": {},
+  "fundExposure": {"version": 1, "updatedAt": null, "fundCount": 0, "mappedCount": 0, "items": {}, "errors": [], "methodology": ""},
+  "fundExposureUpdates": [],
+  "equityHistory": [],
+  "efundsEtfs": [],
+  "sourceWhitelist": [],
+  "newsEvents": [],
+  "financialEvents": [],
+  "trades": [],
+  "executionLog": [],
+  "dailyStatus": [],
+  "signalHistory": [],
+  "agentResearch": [],
+  "simulatedTrading": {"weeklyBudget": 500, "totalContributed": 0, "cash": 0, "invested": 0, "marketValue": 0, "totalAssets": 0, "realizedPnl": 0, "unrealizedPnl": 0, "pnl": 0, "pnlPct": 0, "lastContributionWeek": "", "lastPricedAt": "", "positions": [], "orders": [], "runs": []}
+}
